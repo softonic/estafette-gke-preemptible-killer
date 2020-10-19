@@ -1,6 +1,6 @@
-module github.com/estafette/estafette-gke-preemptible-killer
+module github.com/softonic/estafette-gke-preemptible-killer
 
-go 1.12
+go 1.14
 
 require (
 	cloud.google.com/go v0.0.0-20170811101828-558c9e581ae2 // indirect
