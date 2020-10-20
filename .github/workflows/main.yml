@@ -19,7 +19,7 @@ jobs:
     - uses: goodsmileduck/helm-push-action@v3.2.4
       env:
         SOURCE_DIR: 'helm'
-        CHART_FOLDER: 'estafette-gke-preemptible-killer'
+        CHART_FOLDER: 'preemptible-killer'
         CHARTMUSEUM_URL: 'https://charts.softonic.io'
         CHARTMUSEUM_USER: '${{ secrets.CHARTMUSEUM_USER }}'
         CHARTMUSEUM_PASSWORD: '${{ secrets.CHARTMUSEUM_PASSWORD }}'

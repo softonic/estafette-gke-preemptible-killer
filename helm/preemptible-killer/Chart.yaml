@@ -1,7 +1,7 @@
 apiVersion: v1
 appVersion: "1.2.6"
 description: Kubernetes process to spread preemption for preemtible VMs in GKE to avoid mass deletion after 24 hours
-name: estafette-gke-preemptible-killer
+name: preemptible-killer
 version: 1.2.6
 home: https://helm.estafette.io
 icon: https://helm.estafette.io/icon.png
