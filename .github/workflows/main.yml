@@ -6,9 +6,10 @@ name: Helm Chart
 on:
   push:
     branches:
+      - main
       - master
     paths:
-      - 'chart/**'
+      - 'helm/**'
 
 jobs:
   push-chart:
