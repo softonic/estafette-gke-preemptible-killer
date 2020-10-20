@@ -35,7 +35,7 @@ logFormat: plaintext
 replicaCount: 1
 
 image:
-  repository: estafette/estafette-gke-preemptible-killer
+  repository: softonic/preemptible-killer
   # The tag can be set to override the appVersion getting used as the image tag
   tag:
   pullPolicy: IfNotPresent

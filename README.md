@@ -1,4 +1,10 @@
-# estafette-gke-preemptible-killer
+# preemptible-killer
+
+This repo is based 99% of the 
+
+[estafette-gke-preemptible-killer](https://github.com/estafette/estafette-gke-preemptible-killer)
+
+repo.
 
 This small Kubernetes application loop through a given preemptibles node pool and kill a node before the regular [24h
 life time of a preemptible VM](https://cloud.google.com/compute/docs/instances/preemptible#limitations).
@@ -22,9 +28,6 @@ deleted on GCloud.
 ## Known limitations
 
 - Pods in selected nodes are deleted, not evicted.
-- Currently deletion time is based on node creation time, so if you deploy
-  this tool when your instances have over 12h then you may experience a lot
-  of nodes getting deleted at once.
 - Selecting node pool is not supported yet, the code is processing ALL
   preemptible nodes attached to the cluster, and there is no way to limit it
   even via taints nor annotations
