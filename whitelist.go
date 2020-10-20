@@ -78,10 +78,18 @@ func (w *WhitelistInstance) parseArguments() {
 // getExpiryDate calculates the expiry date of a node.
 func (w *WhitelistInstance) getExpiryDate(t time.Time, timeToBeAdded time.Duration) (expiryDatetime time.Time) {
 	truncatedCreationTime := t.Truncate(24 * time.Hour)
+
+	fmt.Println("this is the truncated Creation time", truncatedCreationTime)
+
 	projectedCreation := whitelistStart.Add(t.Sub(truncatedCreationTime))
+
+	fmt.Println("this is the project Creation", projectedCreation)
+
 
 	first := true
 	for timeToBeAdded > 0 {
+		fmt.Println("timetobeadded is > 0")
+
 		// For all whitelisted intervals...
 		w.whitelistHours.IntervalsBetween(whitelistStart, whitelistEnd, func(start, end time.Time) bool {
 			// For the first iteration only...
@@ -102,6 +110,8 @@ func (w *WhitelistInstance) getExpiryDate(t time.Time, timeToBeAdded time.Durati
 			// If expiry time has been reached...
 			intervalDuration := end.Sub(start)
 			if timeToBeAdded <= intervalDuration {
+				fmt.Println("expiry time has been reached")
+
 				// This is it, project it back to real time.
 				expiryDatetime = truncatedCreationTime.Add(start.Add(timeToBeAdded).Sub(whitelistStart))
 				// But if expiryDatetime is before creation...

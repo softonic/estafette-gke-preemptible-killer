@@ -189,12 +189,17 @@ func getCurrentNodeState(node *apiv1.Node) (state GKEPreemptibleKillerState) {
 // getDesiredNodeState define the state of the node, update node annotations if not present
 func getDesiredNodeState(k KubernetesClient, node *apiv1.Node) (state GKEPreemptibleKillerState, err error) {
 	t := time.Unix(*node.Metadata.CreationTimestamp.Seconds, 0).UTC()
+
 	drainTimeoutTime := time.Duration(*drainTimeout) * time.Second
 	// 43200 = 12h * 60m * 60s
 	randomTimeBetween0to12 := time.Duration(randomEstafette.Intn((43200)-*drainTimeout)) * time.Second
-	timeToBeAdded := 12*time.Hour + drainTimeoutTime + randomTimeBetween0to12
 
-	expiryDatetime := whitelistInstance.getExpiryDate(t, timeToBeAdded)
+	timeToBeAdded := 14*time.Hour + drainTimeoutTime + randomTimeBetween0to12
+
+	// we need to add timeToBeAdded time to the creationTimestamp of the node
+
+	expiryDatetime := t.Add(timeToBeAdded)
+
 	state.ExpiryDatetime = expiryDatetime.Format(time.RFC3339)
 
 	log.Info().
@@ -294,6 +299,8 @@ func processNode(k KubernetesClient, node *apiv1.Node) (err error) {
 			return
 		}
 
+		log.Info().Msg("draining nodes")
+
 		// drain kube-dns from kubernetes node
 		err = k.DrainKubeDNSFromNode(*node.Metadata.Name, *drainTimeout)
 
@@ -316,6 +323,8 @@ func processNode(k KubernetesClient, node *apiv1.Node) (err error) {
 			return
 		}
 
+		log.Info().Msg("deleting nodes via kubectl")
+
 		// delete gcloud instance
 		err = gcloud.DeleteNode(*node.Metadata.Name)
 
@@ -326,6 +335,8 @@ func processNode(k KubernetesClient, node *apiv1.Node) (err error) {
 				Msg("Error deleting GCloud instance")
 			return
 		}
+
+		log.Info().Msg("deleting node via gcloud")
 
 		timerDeletion := time.NewTimer(time.Duration(*coolDowntime) * time.Second)
 
