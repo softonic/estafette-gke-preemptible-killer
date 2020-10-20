@@ -2,10 +2,10 @@ BIN := estafette-gke-preemptible-killer
 PKG := github.com/softonic/estafette-gke-preemptible-killer
 VERSION ?= 0.0.10-dev
 ARCH ?= amd64
-APP ?= gke-preemptible-killer
-NAMESPACE ?= gke-preemptible-killer
-RELEASE_NAME ?= gke-preemptible-killer
-KO_DOCKER_REPO = registry.softonic.io/gke-preemptible-killer
+APP ?= preemptible-killer
+NAMESPACE ?= preemptible-killer
+RELEASE_NAME ?= preemptible-killer
+KO_DOCKER_REPO = registry.softonic.io/estafette-gke-preemptible-killer
 REPOSITORY ?= softonic/$(BIN)
 
 IMAGE := softonic/$(BIN)
@@ -44,3 +44,7 @@ dev: image
 docker-push:
 	docker push $(IMAGE):$(VERSION)
 	docker push $(IMAGE):latest
+
+.PHONY: manifest
+manifest:
+	docker run --rm -v $(PWD):/app -w /app/ alpine/helm:3.2.3 template --release-name $(RELEASE_NAME) --set "image.tag=$(VERSION)" --set "image.repository=$(REPOSITORY)"  -f helm/estafette-gke-preemptible-killer/values.yaml helm/estafette-gke-preemptible-killer > manifest.yaml
