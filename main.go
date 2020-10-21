@@ -315,7 +315,7 @@ func processNode(k KubernetesClient, node *apiv1.Node) (err error) {
 			return
 		}
 
-		log.Info().Str("host", *node.Metadata.Name).Msg("Deleting nodes via k8s")
+		log.Info().Str("host", *node.Metadata.Name).Msg("Remove node from k8s cluster")
 
 		// delete gcloud instance
 		err = gcloud.DeleteNode(*node.Metadata.Name)
@@ -328,7 +328,7 @@ func processNode(k KubernetesClient, node *apiv1.Node) (err error) {
 			return
 		}
 
-		log.Info().Str("host", *node.Metadata.Name).Msg("Deleting nodes via gcloud")
+		log.Info().Str("host", *node.Metadata.Name).Msg("Remove instance from GCP")
 
 		log.Info().Msg("Entering cooldDown")
 
