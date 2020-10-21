@@ -1,3 +1,8 @@
+[![Go Report Card](https://goreportcard.com/badge/softonic/preemptible-killer)](https://goreportcard.com/report/softonic/preemptible-killer)
+[![Releases](https://img.shields.io/github/release-pre/softonic/preemptible-killer.svg?sort=semver)](https://github.com/softonic/preemptible-killer/releases)
+[![LICENSE](https://img.shields.io/github/license/softonic/preemptible-killer.svg)](https://github.com/softonic/preemptible-killer/blob/master/LICENSE)
+[![DockerHub](https://img.shields.io/docker/pulls/softonic/preemptible-killer.svg)](https://hub.docker.com/r/softonic/preemptible-killer)
+
 # preemptible-killer
 
 This repo is based 99% of the 
