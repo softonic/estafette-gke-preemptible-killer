@@ -50,11 +50,6 @@ var (
 	kubeConfigPath = kingpin.Flag("kubeconfig", "Provide the path to the kube config path, usually located in ~/.kube/config. For out of cluster execution").
 			Envar("KUBECONFIG").
 			String()
-	whitelist = kingpin.Flag("whitelist-hours", "List of UTC time intervals in the form of `09:00 - 12:00, 13:00 - 18:00` in which deletion is allowed and preferred").
-			Envar("WHITELIST_HOURS").
-			Default("").
-			Short('w').
-			String()
 	coolDowntime = kingpin.Flag("cool-down-time", "Time, in seconds, to wait between deletion of nodes").
 			Envar("COOL_DOWN_TIME").
 			Default("600").
@@ -82,7 +77,6 @@ var (
 	// Various internals
 	randomEstafette   = rand.New(rand.NewSource(time.Now().UnixNano()))
 	labelFilters      = map[string]string{}
-	whitelistInstance WhitelistInstance
 )
 
 func init() {
@@ -119,9 +113,7 @@ func main() {
 		}
 	}
 
-	whitelistInstance.blacklist = *blacklist
-	whitelistInstance.whitelist = *whitelist
-	whitelistInstance.parseArguments()
+
 
 	kubernetes, err := NewKubernetesClient(os.Getenv("KUBERNETES_SERVICE_HOST"), os.Getenv("KUBERNETES_SERVICE_PORT"),
 		os.Getenv("KUBERNETES_NAMESPACE"), *kubeConfigPath)
@@ -323,7 +315,7 @@ func processNode(k KubernetesClient, node *apiv1.Node) (err error) {
 			return
 		}
 
-		log.Info().Msg("deleting nodes via kubectl")
+		log.Info().Str("host", *node.Metadata.Name).Msg("Deleting nodes via k8s")
 
 		// delete gcloud instance
 		err = gcloud.DeleteNode(*node.Metadata.Name)
@@ -336,7 +328,10 @@ func processNode(k KubernetesClient, node *apiv1.Node) (err error) {
 			return
 		}
 
-		log.Info().Msg("deleting node via gcloud")
+		log.Info().Str("host", *node.Metadata.Name).Msg("Deleting nodes via gcloud")
+
+		log.Info().Msg("Entering cooldDown")
+
 
 		timerDeletion := time.NewTimer(time.Duration(*coolDowntime) * time.Second)
 
