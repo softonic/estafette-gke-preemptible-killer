@@ -59,7 +59,7 @@ var (
 				Envar("TTL_NODES").
 				Default("8").
 				Short('t').
-				Duration()
+				Int64()
 
 	// define prometheus counter
 	nodeTotals = prometheus.NewCounterVec(
@@ -189,7 +189,7 @@ func getDesiredNodeState(k KubernetesClient, node *apiv1.Node) (state GKEPreempt
 	// 43200 = 12h * 60m * 60s
 	randomTimeBetween0to12 := time.Duration(randomEstafette.Intn((43200)-*drainTimeout)) * time.Second
 
-	timeToBeAdded := (*baseTimeToLiveNodes)*time.Hour + drainTimeoutTime + randomTimeBetween0to12
+	timeToBeAdded := time.Duration(*baseTimeToLiveNodes)*time.Hour + drainTimeoutTime + randomTimeBetween0to12
 
 	// we need to add timeToBeAdded time to the creationTimestamp of the node
 
