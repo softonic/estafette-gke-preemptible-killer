@@ -55,6 +55,11 @@ var (
 			Default("600").
 			Short('c').
 			Int64()
+	baseTimeToLiveNodes = kingpin.Flag("ttl-nodes", "If a node has been living more than this time, in hours, it is candidate to be removed").
+				Envar("TTL_NODES").
+				Default("8").
+				Short('t').
+				Duration()
 
 	// define prometheus counter
 	nodeTotals = prometheus.NewCounterVec(
@@ -75,8 +80,8 @@ var (
 	goVersion = runtime.Version()
 
 	// Various internals
-	randomEstafette   = rand.New(rand.NewSource(time.Now().UnixNano()))
-	labelFilters      = map[string]string{}
+	randomEstafette = rand.New(rand.NewSource(time.Now().UnixNano()))
+	labelFilters    = map[string]string{}
 )
 
 func init() {
@@ -112,8 +117,6 @@ func main() {
 			labelFilters[keyValue[0]] = keyValue[1]
 		}
 	}
-
-
 
 	kubernetes, err := NewKubernetesClient(os.Getenv("KUBERNETES_SERVICE_HOST"), os.Getenv("KUBERNETES_SERVICE_PORT"),
 		os.Getenv("KUBERNETES_NAMESPACE"), *kubeConfigPath)
@@ -186,7 +189,7 @@ func getDesiredNodeState(k KubernetesClient, node *apiv1.Node) (state GKEPreempt
 	// 43200 = 12h * 60m * 60s
 	randomTimeBetween0to12 := time.Duration(randomEstafette.Intn((43200)-*drainTimeout)) * time.Second
 
-	timeToBeAdded := 14*time.Hour + drainTimeoutTime + randomTimeBetween0to12
+	timeToBeAdded := (*baseTimeToLiveNodes)*time.Hour + drainTimeoutTime + randomTimeBetween0to12
 
 	// we need to add timeToBeAdded time to the creationTimestamp of the node
 
@@ -331,7 +334,6 @@ func processNode(k KubernetesClient, node *apiv1.Node) (err error) {
 		log.Info().Str("host", *node.Metadata.Name).Msg("Remove instance from GCP")
 
 		log.Info().Msg("Entering cooldDown")
-
 
 		timerDeletion := time.NewTimer(time.Duration(*coolDowntime) * time.Second)
 
