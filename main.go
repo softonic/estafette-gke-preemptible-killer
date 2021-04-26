@@ -57,7 +57,7 @@ var (
 			Int64()
 	baseTimeToLiveNodes = kingpin.Flag("ttl-nodes", "If a node has been living more than this time, in hours, it is candidate to be removed").
 				Envar("TTL_NODES").
-				Default("8").
+				Default("5").
 				Short('t').
 				Int64()
 
